@@ -183,7 +183,8 @@ function MTable({ columns, data }) {
             <div className="overflow-hidden border-b border-gray-200 shadow sm:rounded-lg">
               <table
                 {...getTableProps()}
-                className="min-w-full divide-y divide-gray-200"
+                // className="min-w-full divide-y divide-gray-200"
+                className="w-full min-w-[640px] table-auto"
               >
                 <thead className="bg-gray-50">
                   {headerGroups.map((headerGroup) => (
@@ -193,7 +194,8 @@ function MTable({ columns, data }) {
                         // we can add them into the header props
                         <th
                           scope="col"
-                          className="group px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500"
+                          // className="group px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500"
+                          className="border-b border-blue-gray-50 py-3 px-5 text-left"
                           {...column.getHeaderProps(
                             column.getSortByToggleProps()
                           )}
@@ -231,11 +233,11 @@ function MTable({ columns, data }) {
                           return (
                             <td
                               {...cell.getCellProps()}
-                              className="whitespace-nowrap px-6 py-4"
+                              className="whitespace-nowrap px-5 py-3 text-sm"
                               role="cell"
                             >
                               {cell.column.Cell.name === "defaultRenderer" ? (
-                                <div className="text-sm text-gray-500">
+                                <div className="text-xs text-gray-500">
                                   {cell.render("Cell")}
                                 </div>
                               ) : (

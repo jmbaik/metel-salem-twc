@@ -112,8 +112,8 @@ const Intro = () => {
 
   const data = useMemo(() => getData(), []);
   return (
-    <div className="min-h-screen bg-gray-100 text-gray-900">
-      <main className="mx-auto max-w-5xl px-4 pt-4 sm:px-6 lg:px-8">
+    <div className="bg-gray-100 text-gray-900">
+      <main className="mx-auto px-4 pt-4 sm:px-6 lg:px-8">
         <div className="">
           <h1 className="text-xl font-semibold">
             React Table + Tailwind CSS = ❤

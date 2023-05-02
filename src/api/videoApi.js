@@ -16,7 +16,6 @@ export const useFetchVideoList = () => {
           cat: "",
         },
       });
-      console.log(response.data.result);
       return response.data.result;
     },
     keepPreviousData: true,

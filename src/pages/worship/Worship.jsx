@@ -6,20 +6,22 @@ import {
   Avatar,
   Chip,
   Button,
+  Dialog,
+  Input,
+  Checkbox,
+  CardFooter,
 } from "@material-tailwind/react";
 import React, { useMemo, useState } from "react";
 import { authorsTableData, projectsTableData } from "@/data";
 import { useFetchVideoList } from "@/api/videoApi";
 import MaterialReactTable from "material-react-table";
+import WorshipAdd from "./WorshipAdd";
 
 const Worship = () => {
   const { isLoading, data, isError, error, isFetching } = useFetchVideoList();
   const [rowSelection, setRowSelection] = useState({});
-  if (!isLoading) {
-    data.map((d) => {
-      console.log(`${import.meta.env.VITE_APP_S3_URL}${d.thumnail}`);
-    });
-  }
+  const [open, setOpen] = useState(false);
+
   const columns = useMemo(
     () => [
       {
@@ -54,7 +56,6 @@ const Worship = () => {
         accessorKey: "thumnail",
         header: "이미지",
         Cell: ({ renderCellValue, row }) => {
-          console.log(row.original.thumnail);
           return (
             row.original.thumnail && (
               <Avatar
@@ -86,38 +87,55 @@ const Worship = () => {
       console.log(keys[0]);
     }
   };
+
+  const handleOpen = () => {
+    setOpen(!open);
+  };
+  const onAdd = () => {
+    setOpen(true);
+  };
   return (
-    <div className="mt-12 mb-8 flex flex-col gap-12">
-      <Card>
-        <CardHeader variant="gradient" color="blue" className="mb-4 p-3">
-          <Typography variant="h6">예배 관리</Typography>
-        </CardHeader>
-        <CardBody className="overflow-x-scroll px-0 pt-0 pb-2">
-          <div className="mr-5 flex justify-end gap-4">
-            <Button variant="gradient" size="sm">
-              추가
-            </Button>
-            <Button variant="gradient" color="red" size="sm" onClick={onDelete}>
-              삭제
-            </Button>
-          </div>
-          <MaterialReactTable
-            columns={columns}
-            data={data ?? []}
-            enableRowSelection
-            getRowId={(row) => row.vid}
-            enableMultiRowSelection={false}
-            onRowSelectionChange={setRowSelection}
-            state={{
-              isLoading,
-              showAlertBanner: isError,
-              showProgressBars: isFetching,
-              rowSelection,
-            }}
-          />
-        </CardBody>
-      </Card>
-    </div>
+    <>
+      <div className="mt-12 mb-8 flex flex-col gap-12">
+        <Card>
+          <CardHeader variant="gradient" color="blue" className="mb-4 p-3">
+            <Typography variant="h5">예배 관리</Typography>
+          </CardHeader>
+          <CardBody className="overflow-x-scroll px-0 pt-0 pb-2">
+            <div className="mr-5 flex justify-end gap-4">
+              <Button variant="gradient" size="sm" onClick={onAdd}>
+                추가
+              </Button>
+              <Button
+                variant="gradient"
+                color="red"
+                size="sm"
+                onClick={onDelete}
+              >
+                삭제
+              </Button>
+            </div>
+            <div className="mt-5">
+              <MaterialReactTable
+                columns={columns}
+                data={data ?? []}
+                enableRowSelection
+                getRowId={(row) => row.vid}
+                enableMultiRowSelection={false}
+                onRowSelectionChange={setRowSelection}
+                state={{
+                  isLoading,
+                  showAlertBanner: isError,
+                  showProgressBars: isFetching,
+                  rowSelection,
+                }}
+              />
+            </div>
+          </CardBody>
+        </Card>
+      </div>
+      <WorshipAdd open={open} handleOpen={handleOpen} />
+    </>
   );
 };
 

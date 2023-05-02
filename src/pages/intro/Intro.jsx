@@ -3,7 +3,7 @@ import React, { useMemo, useState } from "react";
 import MaterialReactTable from "material-react-table";
 import { Button } from "@material-tailwind/react";
 
-const data = [
+const _data = [
   {
     name: {
       firstName: "John",
@@ -49,7 +49,73 @@ const data = [
     city: "Charleston",
     state: "South Carolina",
   },
+
+  {
+    name: {
+      firstName: "John1",
+      lastName: "Doe1",
+    },
+    address: "261 Erdman Ford",
+    city: "East Daphne",
+    state: "Kentucky",
+  },
+  {
+    name: {
+      firstName: "Jane1",
+      lastName: "Doe1",
+    },
+    address: "769 Dominic Grove",
+    city: "Columbus",
+    state: "Ohio",
+  },
+  {
+    name: {
+      firstName: "Joe1",
+      lastName: "Doe1",
+    },
+    address: "566 Brakus Inlet",
+    city: "South Linda",
+    state: "West Virginia",
+  },
+  {
+    name: {
+      firstName: "Kevin1",
+      lastName: "Vandy1",
+    },
+    address: "722 Emie Stream",
+    city: "Lincoln",
+    state: "Nebraska",
+  },
+  {
+    name: {
+      firstName: "Joshua1",
+      lastName: "Rolluffs1",
+    },
+    address: "32188 Larkin Turnpike",
+    city: "Charleston",
+    state: "South Carolina",
+  },
+  {
+    name: {
+      firstName: "Kevin2",
+      lastName: "Vandy2",
+    },
+    address: "722 Emie Stream",
+    city: "Lincoln",
+    state: "Nebraska",
+  },
+  {
+    name: {
+      firstName: "Joshua2",
+      lastName: "Rolluffs2",
+    },
+    address: "32188 Larkin Turnpike",
+    city: "Charleston",
+    state: "South Carolina",
+  },
 ];
+
+const data = [..._data];
 
 const Intro = () => {
   const [rowSelection, setRowSelection] = useState({});

@@ -21,6 +21,7 @@ const Worship = () => {
   const { isLoading, data, isError, error, isFetching } = useFetchVideoList();
   const [rowSelection, setRowSelection] = useState({});
   const [open, setOpen] = useState(false);
+  const [ie, setIe] = useState("");
 
   const columns = useMemo(
     () => [
@@ -82,6 +83,7 @@ const Worship = () => {
   );
 
   const onDelete = () => {
+    setIe("d");
     const keys = Object.keys(rowSelection);
     if (keys.length) {
       console.log(keys[0]);
@@ -92,6 +94,7 @@ const Worship = () => {
     setOpen(!open);
   };
   const onAdd = () => {
+    setIe("i");
     setOpen(true);
   };
   return (
@@ -134,7 +137,7 @@ const Worship = () => {
           </CardBody>
         </Card>
       </div>
-      <WorshipAdd open={open} handleOpen={handleOpen} />
+      <WorshipAdd open={open} handleOpen={handleOpen} ie={ie} />
     </>
   );
 };

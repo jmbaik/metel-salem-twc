@@ -38,7 +38,7 @@ const WorshipAdd = ({ ie, open, handleOpen }) => {
     reset,
     formState: { errors, isDirty, isSubmitSuccessful },
   } = useForm({
-    // mode: "onSubmit",
+    mode: "onSubmit",
     defaultValues: initialValues,
   });
 

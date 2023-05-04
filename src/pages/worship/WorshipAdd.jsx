@@ -4,8 +4,6 @@ import {
   CardBody,
   CardHeader,
   Typography,
-  Avatar,
-  Chip,
   Button,
   Input,
   Checkbox,
@@ -16,6 +14,7 @@ import {
 } from "@material-tailwind/react";
 import { Controller, useForm } from "react-hook-form";
 import MNotification from "@/comonents/MNotification";
+import { useMetelUpload } from "@/hooks/useMetelUpload";
 
 const WorshipAdd = ({ ie, open, handleOpen }) => {
   const initialValues = {
@@ -43,6 +42,17 @@ const WorshipAdd = ({ ie, open, handleOpen }) => {
   });
 
   const onSubmit = handleSubmit((data) => {
+    console.log(data.thumnail[0]);
+    const file = data.thumnail[0];
+    const fileExt = file.name.split(".").pop();
+    const fileFullName = "/video/h1001-1" + fileExt;
+    useMetelUpload(file, fileFullName)
+      .then((res) => {
+        console.log(import.meta.env.VITE_APP_S3_URL + fileFullName);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
     console.log("handlesubmitdata", data);
   });
 
@@ -123,7 +133,14 @@ const WorshipAdd = ({ ie, open, handleOpen }) => {
               size="lg"
               {...register("speaker")}
             />
-            <Input type="file" name="thumnail" label="썸네일" size="lg" />
+            <Input
+              type="file"
+              name="thumnail"
+              label="썸네일"
+              size="lg"
+              {...register("thumnail", { required: true })}
+              error={Boolean(errors.thumnail) ? true : false}
+            />
             <Input
               label="등록자"
               size="lg"

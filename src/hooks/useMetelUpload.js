@@ -1,12 +1,11 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import AWS from "aws-sdk";
 
-export const useMetelUpload = ({ file, fileName }) => {
+export function useMetelUpload(file, fileName) {
   const ACCESS_KEY = import.meta.env.VITE_APP_ACCESS_KEY;
   const SECRET_ACCESS_KEY = import.meta.env.VITE_APP_SECRET_ACCESS_KEY;
   const REGION = import.meta.env.VITE_APP_REGION;
   const S3_BUCKET = import.meta.env.VITE_APP_S3_BUCKET;
-  const [fileName, setFileName] = useState("");
 
   AWS.config.update({
     accessKeyId: ACCESS_KEY,
@@ -23,29 +22,18 @@ export const useMetelUpload = ({ file, fileName }) => {
       ACL: "public-read",
       Body: file,
       Bucket: S3_BUCKET,
-      Key: "upload/" + dir + "/" + fileName + "." + ext,
+      Key: "upload/" + fileName,
     };
-    myBucket
-      .putObject(params)
-      .on("httpUploadProgress", (e) => {
-        setProgress(Math.round((e.loaded / e.total) * 100));
-        setShowAlert(true);
-        setTimeout(() => {
-          setShowAlert(false);
-          setSelectedFile(null);
-          setDone("done");
-          props.onDoneState(true);
-          setImgUrl(`${dir}/${fileName}.${ext}`);
-          console.log("upload imgurl = " + `${dir}/${fileName}.${ext}`);
-          props.getImgUrl(`${dir}/${fileName}.${ext}`);
-        }, 2000);
-      })
-      .send((err) => {
-        if (err) console.log(err);
-      });
+    return myBucket.putObject(params).promise();
+    // .then((res) => {
+    //   console.log(`Upload succeed - `, res);
+    //   uploadResult = true;
+    // })
+    // .catch((err) => {
+    //   console.log("upload failed", err);
+    //   uploadResult = false;
+    //   uploadError = err;
+    // });
   };
-
-  return {
-    result,
-  };
-};
+  return uploadFile;
+}

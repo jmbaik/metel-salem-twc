@@ -1,11 +1,6 @@
 import apiFetch from "@/utils/axios";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 
-export const videoSeqApi = () => {
-  const promise = apiFetch.get("/video/seq-video");
-  return promise;
-};
-
 export const useFetchVideoList = () => {
   const { isLoading, data, isError, error, isFetching } = useQuery({
     queryKey: ["video-list"],
@@ -27,8 +22,7 @@ export const useSaveVideo = () => {
   const queryClient = useQueryClient();
   const { mutate: saveVideo, isLoading: saveLoading } = useMutation({
     mutationFn: async (params) => {
-      console.log("---------------------");
-      console.log(params);
+      console.log("video useSaveVideo ", params);
       const resp = await apiFetch.post("/video/default", params);
       return resp.data.result;
     },

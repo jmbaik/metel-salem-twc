@@ -15,8 +15,11 @@ import {
 import { Controller, useForm } from "react-hook-form";
 import MNotification from "@/comonents/MNotification";
 import { metelUpload } from "@/hooks/useMetelUpload";
+import { useQueryClient } from "@tanstack/react-query";
+import { useDeleteVideo, useSaveVideo } from "@/api/videoApi";
 
 const WorshipAdd = ({ ie, open, handleOpen }) => {
+  const queryClient = useQueryClient();
   const initialValues = {
     churchCode: "",
     vid: "",
@@ -41,25 +44,46 @@ const WorshipAdd = ({ ie, open, handleOpen }) => {
     defaultValues: initialValues,
   });
 
-  const onSubmit = handleSubmit((data) => {
-    console.log(data.thumnail[0]);
-    const file = data.thumnail[0];
+  const { saveVideo, saveLoading } = useSaveVideo();
+  const { deleteVideo, deleteLoading } = useDeleteVideo();
+  const [uploadDone, setUploadDone] = useState(false);
+  const [uploadFileName, setUploadFileName] = useState("");
+
+  const handleFileInput = (e) => {
+    const file = e.target.files[0];
     const fileExt = file.name.split(".").pop();
     const fileFullName = "/video/h1001-1" + fileExt;
-    console.log(fileFullName);
+    setUploadFileName(fileFullName);
     metelUpload(file, fileFullName)
       .then((res) => {
-        console.log("formdata", data);
+        console.log("handlefileinput", file.name);
+        setUploadDone(true);
+        setValue("thumnail", uploadFileName);
       })
       .catch((err) => {
         console.log(err);
       });
+  };
+
+  const onSubmit = handleSubmit((data) => {
+    if (ie === "i") {
+      setValue("churchCode", "H1001");
+    }
+    setValue("thumnail", uploadFileName);
+    console.log("formdata", data);
+    saveVideo(data, {
+      onSuccess: () => {
+        handleOpen(false);
+      },
+    });
   });
 
   useEffect(() => {
     if (open && ie === "i") {
+      setUploadDone(false);
       reset(initialValues);
     }
+    setValue("churchCode", "H1001");
   }, [ie, open]);
 
   return (
@@ -88,6 +112,7 @@ const WorshipAdd = ({ ie, open, handleOpen }) => {
               defaultValue={"H1001"}
               size="lg"
               disabled={true}
+              {...register("churchCode", { value: "H1001" })}
             />
             <Controller
               name="cat"
@@ -118,7 +143,6 @@ const WorshipAdd = ({ ie, open, handleOpen }) => {
                 );
               }}
             />
-            <input type="hidden" value="H1001" {...register("churchCode")} />
             <Input
               label="제목"
               name="title"
@@ -138,8 +162,8 @@ const WorshipAdd = ({ ie, open, handleOpen }) => {
               name="thumnail"
               label="썸네일"
               size="lg"
-              {...register("thumnail", { required: true })}
-              error={Boolean(errors.thumnail) ? true : false}
+              onChange={handleFileInput}
+              error={!uploadDone ? true : false}
             />
             <Input
               label="등록자"

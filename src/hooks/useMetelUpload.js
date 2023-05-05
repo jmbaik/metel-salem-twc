@@ -1,7 +1,7 @@
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import AWS from "aws-sdk";
 
-export function useMetelUpload(file, fileName) {
+export function metelUpload(file, fileName) {
   const ACCESS_KEY = import.meta.env.VITE_APP_ACCESS_KEY;
   const SECRET_ACCESS_KEY = import.meta.env.VITE_APP_SECRET_ACCESS_KEY;
   const REGION = import.meta.env.VITE_APP_REGION;
@@ -16,24 +16,11 @@ export function useMetelUpload(file, fileName) {
     region: REGION,
   });
 
-  const uploadFile = (file) => {
-    console.log(file.name);
-    const params = {
-      ACL: "public-read",
-      Body: file,
-      Bucket: S3_BUCKET,
-      Key: "upload/" + fileName,
-    };
-    return myBucket.putObject(params).promise();
-    // .then((res) => {
-    //   console.log(`Upload succeed - `, res);
-    //   uploadResult = true;
-    // })
-    // .catch((err) => {
-    //   console.log("upload failed", err);
-    //   uploadResult = false;
-    //   uploadError = err;
-    // });
+  const params = {
+    ACL: "public-read",
+    Body: file,
+    Bucket: S3_BUCKET,
+    Key: "upload/" + fileName,
   };
-  return uploadFile;
+  return myBucket.putObject(params).promise();
 }

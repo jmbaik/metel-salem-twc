@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import {
   Card,
   CardBody,
@@ -14,7 +14,7 @@ import {
 } from "@material-tailwind/react";
 import { Controller, useForm } from "react-hook-form";
 import MNotification from "@/comonents/MNotification";
-import { useMetelUpload } from "@/hooks/useMetelUpload";
+import { metelUpload } from "@/hooks/useMetelUpload";
 
 const WorshipAdd = ({ ie, open, handleOpen }) => {
   const initialValues = {
@@ -46,14 +46,14 @@ const WorshipAdd = ({ ie, open, handleOpen }) => {
     const file = data.thumnail[0];
     const fileExt = file.name.split(".").pop();
     const fileFullName = "/video/h1001-1" + fileExt;
-    useMetelUpload(file, fileFullName)
+    console.log(fileFullName);
+    metelUpload(file, fileFullName)
       .then((res) => {
-        console.log(import.meta.env.VITE_APP_S3_URL + fileFullName);
+        console.log("formdata", data);
       })
       .catch((err) => {
         console.log(err);
       });
-    console.log("handlesubmitdata", data);
   });
 
   useEffect(() => {

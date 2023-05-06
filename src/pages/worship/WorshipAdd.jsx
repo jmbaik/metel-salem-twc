@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useReducer } from "react";
 import {
   Card,
   CardBody,
@@ -17,9 +17,11 @@ import MNotification from "@/comonents/MNotification";
 import { metelUpload } from "@/hooks/useMetelUpload";
 import { useQueryClient } from "@tanstack/react-query";
 import { useDeleteVideo, useSaveVideo } from "@/api/videoApi";
+import { v4 as uuidv4 } from "uuid";
 
-const WorshipAdd = ({ ie, open, handleOpen }) => {
+const WorshipAdd = ({ ie, open, handleOpen, row }) => {
   const queryClient = useQueryClient();
+
   const initialValues = {
     churchCode: "",
     vid: "",
@@ -29,6 +31,7 @@ const WorshipAdd = ({ ie, open, handleOpen }) => {
     speaker: "",
     thumnail: "",
     regId: "",
+    updId: "",
   };
 
   const {
@@ -52,13 +55,14 @@ const WorshipAdd = ({ ie, open, handleOpen }) => {
   const handleFileInput = (e) => {
     const file = e.target.files[0];
     const fileExt = file.name.split(".").pop();
-    const fileFullName = "/video/h1001-1" + fileExt;
+    const _uuid = uuidv4();
+    const fileFullName = `/video/${_uuid}.${fileExt}`;
     setUploadFileName(fileFullName);
     metelUpload(file, fileFullName)
       .then((res) => {
         console.log("handlefileinput", file.name);
         setUploadDone(true);
-        setValue("thumnail", uploadFileName);
+        setValue("thumnail", fileFullName);
       })
       .catch((err) => {
         console.log(err);
@@ -66,8 +70,14 @@ const WorshipAdd = ({ ie, open, handleOpen }) => {
   };
 
   const onSubmit = handleSubmit((data) => {
+    if (!uploadDone) {
+      alert("파일 첨부가 되지 않았습니다. 파일을 첨부하여 주시길 바랍니다.");
+      return;
+    }
     if (ie === "i") {
       setValue("churchCode", "H1001");
+    } else {
+      console.log("row", row);
     }
     setValue("thumnail", uploadFileName);
     console.log("formdata", data);
@@ -82,6 +92,9 @@ const WorshipAdd = ({ ie, open, handleOpen }) => {
     if (open && ie === "i") {
       setUploadDone(false);
       reset(initialValues);
+    }
+    if (open && ie === "e") {
+      console.log("addmodal row is ", row);
     }
     setValue("churchCode", "H1001");
   }, [ie, open]);
@@ -163,7 +176,7 @@ const WorshipAdd = ({ ie, open, handleOpen }) => {
               label="썸네일"
               size="lg"
               onChange={handleFileInput}
-              error={!uploadDone ? true : false}
+              // error={!uploadDone ? true : false}
             />
             <Input
               label="등록자"

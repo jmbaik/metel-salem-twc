@@ -10,18 +10,46 @@ import {
   Input,
   Checkbox,
   CardFooter,
+  Tooltip,
+  IconButton,
 } from "@material-tailwind/react";
-import React, { useMemo, useState } from "react";
+import React, { useEffect, useMemo, useReducer } from "react";
 import { authorsTableData, projectsTableData } from "@/data";
 import { useFetchVideoList } from "@/api/videoApi";
 import MaterialReactTable from "material-react-table";
 import WorshipAdd from "./WorshipAdd";
 
+const actionType = {
+  open: "worship-open",
+  ie: "worship-ie",
+  row: "worship-selected-row",
+};
+
+function reducer(state, action) {
+  switch (action.type) {
+    case actionType.open:
+      return { ...state, open: action.open };
+    case actionType.ie:
+      return { ...state, ie: action.ie };
+    case actionType.row:
+      console.log("actiontype row: ", action.selectedRow);
+      return {
+        ...state,
+        selectedRow: action.selectedRow,
+      };
+    default:
+      return state;
+  }
+}
+
 const Worship = () => {
   const { isLoading, data, isError, error, isFetching } = useFetchVideoList();
-  const [rowSelection, setRowSelection] = useState({});
-  const [open, setOpen] = useState(false);
-  const [ie, setIe] = useState("");
+
+  const [worshipState, dispatch] = useReducer(reducer, {
+    open: false,
+    ie: "",
+    selectedRow: {},
+  });
 
   const columns = useMemo(
     () => [
@@ -82,21 +110,45 @@ const Worship = () => {
     []
   );
 
-  const onDelete = () => {
-    setIe("d");
-    const keys = Object.keys(rowSelection);
-    if (keys.length) {
-      console.log(keys[0]);
-    }
-  };
+  const onDelete = () => {};
 
   const handleOpen = () => {
-    setOpen(!open);
+    dispatch({
+      type: actionType.open,
+      open: !worshipState.open,
+    });
   };
   const onAdd = () => {
-    setIe("i");
-    setOpen(true);
+    // setIe("i");
+    // setOpen(true);
+    dispatch({
+      type: actionType.ie,
+      ie: "i",
+    });
+    dispatch({
+      type: actionType.open,
+      open: true,
+    });
   };
+
+  const handleEditRow = (row) => {
+    const original = row.original;
+    dispatch({ type: actionType.ie, ie: "e" });
+    dispatch({ type: actionType.row, selectedRow: original });
+    console.log(original);
+  };
+
+  const handleDeleteRow = (row) => {
+    console.log(row.original);
+  };
+
+  useEffect(() => {
+    if (worshipState.ie === "e") {
+      dispatch({ type: actionType.open, open: true });
+      console.log("worshipstate selectedrow", worshipState.selectedRow);
+    }
+  }, [worshipState.selectedRow]);
+
   return (
     <>
       <div className="mt-12 mb-8 flex flex-col gap-12">
@@ -120,24 +172,56 @@ const Worship = () => {
             </div>
             <div className="mt-5">
               <MaterialReactTable
+                displayColumnDefOptions={{
+                  "mrt-row-actions": {
+                    muiTableHeadCellProps: {
+                      align: "center",
+                    },
+                    size: 120,
+                  },
+                }}
                 columns={columns}
                 data={data ?? []}
-                enableRowSelection
                 getRowId={(row) => row.vid}
-                enableMultiRowSelection={false}
-                onRowSelectionChange={setRowSelection}
+                enableEditing
+                renderRowActions={({ row, table }) => (
+                  <div className="flex gap-1">
+                    <Tooltip placement="left" content="Edit" size="sm">
+                      <IconButton
+                        size="sm"
+                        color="green"
+                        onClick={() => handleEditRow(row)}
+                      >
+                        <i className="fa-regular fa-pen-to-square" />
+                      </IconButton>
+                    </Tooltip>
+                    <Tooltip placement="right" content="Delete" size="sm">
+                      <IconButton
+                        size="sm"
+                        color="red"
+                        onClick={() => handleDeleteRow(row)}
+                      >
+                        <i className="fa-solid fa-trash" />
+                      </IconButton>
+                    </Tooltip>
+                  </div>
+                )}
                 state={{
                   isLoading,
                   showAlertBanner: isError,
                   showProgressBars: isFetching,
-                  rowSelection,
                 }}
               />
             </div>
           </CardBody>
         </Card>
       </div>
-      <WorshipAdd open={open} handleOpen={handleOpen} ie={ie} />
+      <WorshipAdd
+        open={worshipState.open}
+        handleOpen={handleOpen}
+        ie={worshipState.ie}
+        row={worshipState.selectedRow}
+      />
     </>
   );
 };

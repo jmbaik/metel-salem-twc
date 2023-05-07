@@ -11,6 +11,7 @@ import {
   Dialog,
   Select,
   Option,
+  img,
 } from "@material-tailwind/react";
 import { Controller, useForm } from "react-hook-form";
 import MNotification from "@/comonents/MNotification";
@@ -56,7 +57,13 @@ const WorshipAdd = ({ ie, open, handleOpen, row }) => {
     const file = e.target.files[0];
     const fileExt = file.name.split(".").pop();
     const _uuid = uuidv4();
-    const fileFullName = `/video/${_uuid}.${fileExt}`;
+    let fileFullName = "";
+    if (ie === "i") {
+      fileFullName = `/video/${_uuid}.${fileExt}`;
+    } else {
+      const withoutExt = file.name.split(".")[0];
+      fileFullName = `${withoutExt}.${fileExt}`;
+    }
     setUploadFileName(fileFullName);
     metelUpload(file, fileFullName)
       .then((res) => {
@@ -95,6 +102,9 @@ const WorshipAdd = ({ ie, open, handleOpen, row }) => {
     }
     if (open && ie === "e") {
       console.log("addmodal row is ", row);
+      for (const [key, value] of Object.entries(row)) {
+        setValue(key, value);
+      }
     }
     setValue("churchCode", "H1001");
   }, [ie, open]);
@@ -178,6 +188,13 @@ const WorshipAdd = ({ ie, open, handleOpen, row }) => {
               onChange={handleFileInput}
               // error={!uploadDone ? true : false}
             />
+            {ie === "e" ? (
+              <img
+                className="h-16 w-16 rounded-lg shadow-sm shadow-blue-gray-900/50"
+                src={`${import.meta.env.VITE_APP_S3_URL}${row.thumnail}`}
+                alt="thumnail"
+              ></img>
+            ) : null}
             <Input
               label="등록자"
               size="lg"

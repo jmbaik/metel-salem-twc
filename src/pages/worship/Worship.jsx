@@ -13,11 +13,12 @@ import {
   Tooltip,
   IconButton,
 } from "@material-tailwind/react";
-import React, { useEffect, useMemo, useReducer } from "react";
+import React, { useEffect, useMemo, useReducer, useState } from "react";
 import { authorsTableData, projectsTableData } from "@/data";
 import { useFetchVideoList } from "@/api/videoApi";
 import MaterialReactTable from "material-react-table";
 import WorshipAdd from "./WorshipAdd";
+import { useDeleteVideo } from "@/api/videoApi";
 
 const actionType = {
   open: "worship-open",
@@ -44,7 +45,8 @@ function reducer(state, action) {
 
 const Worship = () => {
   const { isLoading, data, isError, error, isFetching } = useFetchVideoList();
-
+  const [editClickIndex, setEditClickIndex] = useState(0);
+  const { deleteVideo, deleteLoading } = useDeleteVideo();
   const [worshipState, dispatch] = useReducer(reducer, {
     open: false,
     ie: "",
@@ -133,6 +135,7 @@ const Worship = () => {
 
   const handleEditRow = (row) => {
     const original = row.original;
+    setEditClickIndex((prev) => prev + 1);
     dispatch({ type: actionType.ie, ie: "e" });
     dispatch({ type: actionType.row, selectedRow: original });
     console.log(original);
@@ -140,6 +143,18 @@ const Worship = () => {
 
   const handleDeleteRow = (row) => {
     console.log(row.original);
+    const original = row.original;
+    const params = {
+      churchCode: original.churchCode,
+      vid: original.vid,
+    };
+    if (confirm("삭제 작업을 진행하시겠습니까?")) {
+      deleteVideo(params, {
+        onSuccess: () => {
+          alert("삭제 작업을 완료하였습니다.");
+        },
+      });
+    }
   };
 
   useEffect(() => {
@@ -147,7 +162,7 @@ const Worship = () => {
       dispatch({ type: actionType.open, open: true });
       console.log("worshipstate selectedrow", worshipState.selectedRow);
     }
-  }, [worshipState.selectedRow]);
+  }, [editClickIndex, worshipState.selectedRow]);
 
   return (
     <>
@@ -158,16 +173,8 @@ const Worship = () => {
           </CardHeader>
           <CardBody className="overflow-x-scroll px-0 pt-0 pb-2">
             <div className="mr-5 flex justify-end gap-4">
-              <Button variant="gradient" size="sm" onClick={onAdd}>
+              <Button variant="gradient" size="md" onClick={onAdd}>
                 추가
-              </Button>
-              <Button
-                variant="gradient"
-                color="red"
-                size="sm"
-                onClick={onDelete}
-              >
-                삭제
               </Button>
             </div>
             <div className="mt-5">

@@ -40,7 +40,11 @@ export const useDeleteVideo = () => {
   const queryClient = useQueryClient();
   const { mutate: deleteVideo, isLoading: deleteLoading } = useMutation({
     mutationFn: async (params) => {
-      const resp = await apiFetch.delete("/video/default", params);
+      console.log("deleteVideo mutation function call");
+      const resp = await apiFetch.delete("/video/default", {
+        data: params,
+      });
+      console.log("delete mutaion", params);
       return resp.data.result;
     },
     onSuccess: () => {

@@ -17,7 +17,7 @@ import { Controller, useForm } from "react-hook-form";
 import MNotification from "@/comonents/MNotification";
 import { metelUpload } from "@/hooks/useMetelUpload";
 import { useQueryClient } from "@tanstack/react-query";
-import { useDeleteVideo, useSaveVideo } from "@/api/videoApi";
+import { useSaveVideo } from "@/api/videoApi";
 import { v4 as uuidv4 } from "uuid";
 
 const WorshipAdd = ({ ie, open, handleOpen, row }) => {
@@ -49,7 +49,6 @@ const WorshipAdd = ({ ie, open, handleOpen, row }) => {
   });
 
   const { saveVideo, saveLoading } = useSaveVideo();
-  const { deleteVideo, deleteLoading } = useDeleteVideo();
   const [uploadDone, setUploadDone] = useState(false);
   const [uploadFileName, setUploadFileName] = useState("");
 
@@ -87,7 +86,7 @@ const WorshipAdd = ({ ie, open, handleOpen, row }) => {
       console.log("row", row);
     }
     setValue("thumnail", uploadFileName);
-    console.log("formdata", data);
+    // console.log("formdata", data);
     saveVideo(data, {
       onSuccess: () => {
         handleOpen(false);
@@ -129,14 +128,21 @@ const WorshipAdd = ({ ie, open, handleOpen, row }) => {
             </Typography>
           </CardHeader>
           <CardBody className="flex flex-col gap-4">
-            <Input
-              label="교회코드"
-              name="churchCode"
-              defaultValue={"H1001"}
-              size="lg"
-              disabled={true}
-              {...register("churchCode", { value: "H1001" })}
-            />
+            <div className="flex gap-5">
+              <Input
+                label="교회코드"
+                name="churchCode"
+                defaultValue={"H1001"}
+                disabled={true}
+                {...register("churchCode", { value: "H1001" })}
+              />
+              <Input
+                label="code"
+                name="vid"
+                {...register("vid")}
+                disabled={true}
+              />
+            </div>
             <Controller
               name="cat"
               control={control}
@@ -196,14 +202,17 @@ const WorshipAdd = ({ ie, open, handleOpen, row }) => {
               ></img>
             ) : null}
             <Input
+              label="동영상 url"
+              name="vdoUrl"
+              size="lg"
+              {...register("vdoUrl")}
+            />
+            <Input
               label="등록자"
               size="lg"
               name="regId"
               {...register("regId")}
             />
-            <div className="-ml-2.5">
-              <Checkbox label="Remember Me" />
-            </div>
           </CardBody>
           <CardFooter className="flex justify-end gap-5 pt-0">
             <Button variant="gradient" onClick={onSubmit}>

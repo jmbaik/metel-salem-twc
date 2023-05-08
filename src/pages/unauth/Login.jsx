@@ -31,7 +31,7 @@ export default function Login() {
     const userData = res.result;
     addUserToSessionStorage(userData);
     console.log("login result", userData);
-    navigate("/*");
+    navigate("/dashboard/home");
   };
   return (
     <>

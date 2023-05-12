@@ -27,8 +27,9 @@ export function Dashboard() {
         // brandImg={
         //   sidenavType === "dark" ? "/img/logo-ct.png" : "/img/logo-ct-dark.png"
         // }
-        brandImg={"/img/hc1001.jpeg"}
-        brandName="부산초원교회"
+        // brandImg={"/img/hc1001.jpeg"}
+        brandImg={user?.pic}
+        brandName={user?.churchName}
       />
       <div className="p-4 xl:ml-80">
         <DashboardNavbar />

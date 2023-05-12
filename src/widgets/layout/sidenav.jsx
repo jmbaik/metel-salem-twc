@@ -100,7 +100,7 @@ export function Sidenav({ brandImg, brandName, routes }) {
 
 Sidenav.defaultProps = {
   brandImg: "/img/logo-ct.png",
-  brandName: "Metel Salem Admin",
+  brandName: "MetelSoft Salem App",
 };
 
 Sidenav.propTypes = {

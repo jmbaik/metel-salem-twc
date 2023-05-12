@@ -1,4 +1,4 @@
-import { Link, useNavigate } from "react-router-dom";
+import { Link, Navigate, useNavigate } from "react-router-dom";
 import {
   Card,
   CardHeader,
@@ -11,16 +11,24 @@ import {
 } from "@material-tailwind/react";
 import { useForm } from "react-hook-form";
 import { loginApi } from "@/api/commonApi";
-import { addUserToSessionStorage } from "@/utils/sessionStorage";
+import {
+  addUserToSessionStorage,
+  getUserFromSessionStorage,
+} from "@/utils/sessionStorage";
+import { useEffect, useState } from "react";
+import { useRecoilValue } from "recoil";
+import { adminUserState } from "@/atom/adminUserState";
 
 export default function Login() {
-  const navigate = useNavigate();
+  const user = useRecoilValue(adminUserState);
   const {
     register,
     handleSubmit,
     formState: { errors },
     reset,
-  } = useForm();
+  } = useForm({
+    mode: "onSubmit",
+  });
   const onSubmit = async (data) => {
     const res = await loginApi(data);
     console.log(res);
@@ -28,13 +36,15 @@ export default function Login() {
       alert(res.message);
       return;
     }
-    const userData = res.result;
-    addUserToSessionStorage(userData);
-    console.log("login result", userData);
-    navigate("/abc");
+    const _userData = res.result;
+    addUserToSessionStorage(_userData);
+    console.log("login result", _userData);
+    window.location.replace("/dashboard/home");
   };
+
   return (
     <>
+      {user && <Navigate to="/dashboard/home" replace={true} />}
       <img
         src="https://images.unsplash.com/photo-1497294815431-9365093b7331?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1950&q=80"
         className="absolute inset-0 z-0 h-full w-full object-cover"
